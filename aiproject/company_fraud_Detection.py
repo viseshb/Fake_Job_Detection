@@ -83,6 +83,14 @@ def train_model(df):
     return rf, vectorizer
 
 # === Fuzzy Match + Prediction ===
+def interpret_match_score(score):
+    if score >= 90:
+        return "✅ Highly confident match"
+    elif 80 <= score < 90:
+        return "⚠️ Acceptable match – use with caution"
+    else:
+        return "❌ Too weak – typically unreliable"
+
 def predict_company_profile_advanced(text, model, vectorizer, full_dataset):
     cleaned = clean_text(text)
 
@@ -95,7 +103,7 @@ def predict_company_profile_advanced(text, model, vectorizer, full_dataset):
     known_profiles = full_dataset['company_profile_clean'].tolist()
     best_match, match_score = process.extractOne(cleaned, known_profiles, scorer=fuzz.token_sort_ratio)
 
-    if match_score < 70:
+    if match_score is None or match_score < 70:
         print(f"\n🔍 Input: {text}")
         print(f"🔹 Cleaned: {cleaned}")
         print("❌ Company not found in dataset.")
@@ -130,10 +138,8 @@ def predict_company_profile_advanced(text, model, vectorizer, full_dataset):
             new_model, new_vectorizer = train_model(new_df)
 
             # Re-run prediction
-            # Re-run after reloading updated dataset
             df_updated = load_dataset()
             predict_company_profile_advanced(text, new_model, new_vectorizer, df_updated)
-
             return True
         else:
             print("ℹ️ Skipped. Not added.")
@@ -150,7 +156,7 @@ def predict_company_profile_advanced(text, model, vectorizer, full_dataset):
     print(f"\n🔍 Input: {text}")
     print(f"🔹 Cleaned: {cleaned}")
     print(f"🔹 Closest Match: {best_match}")
-    print(f"🔹 Match Score: {match_score}%")
+    print(f"🔹 Match Score: {match_score}% → {interpret_match_score(match_score)}")
     print(f"🔹 Dataset Label: {'Fraudulent' if dataset_label == 1 else 'Real'}")
     print(f"🔹 Model Prediction: {'Fraudulent' if pred == 1 else 'Real'}")
     print(f"🔹 Fraud Probability: {prob:.3f}")

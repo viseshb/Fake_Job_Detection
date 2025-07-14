@@ -29,36 +29,7 @@ def load_dataset():
     df = df[df['company_profile_clean'] != ""]
     return df
 
-# === Train Model ===
-# def train_model(df):
-#     df['label'] = df['fraudulent']
-#     df = df[['company_profile_clean', 'label']].drop_duplicates()
 
-#     value_counts = df['label'].value_counts()
-#     if len(value_counts) < 2 or value_counts.min() < 2:
-#         print("⚠️ Not enough samples in each class. Training on entire data without test split.")
-#         vectorizer = TfidfVectorizer(max_features=3000)
-#         X = vectorizer.fit_transform(df['company_profile_clean'])
-#         y = df['label']
-#         rf = RandomForestClassifier(n_estimators=100, random_state=42)
-#         rf.fit(X, y)
-#     else:
-#         vectorizer = TfidfVectorizer(max_features=3000)
-#         X = vectorizer.fit_transform(df['company_profile_clean'])
-#         y = df['label']
-#         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
-#         rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
-#         rf.fit(X_train, y_train)
-
-#         y_pred = rf.predict(X_test)
-#         print("\n=== Random Forest Evaluation ===")
-#         print(classification_report(y_test, y_pred, zero_division=0))
-#         print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
-#         print("Accuracy:", accuracy_score(y_test, y_pred))
-
-#     pickle.dump(rf, open(f"{MODEL_DIR}/random_forest_model.pkl", "wb"))
-#     pickle.dump(vectorizer, open(f"{MODEL_DIR}/vectorizer.pkl", "wb"))
-#     return rf, vectorizer
 def train_model(df):
     df['label'] = df['fraudulent']
     df = df[['company_profile_clean', 'label']].drop_duplicates()
@@ -124,7 +95,7 @@ def predict_company_profile_advanced(text, model, vectorizer, full_dataset):
     known_profiles = full_dataset['company_profile_clean'].tolist()
     best_match, match_score = process.extractOne(cleaned, known_profiles, scorer=fuzz.token_sort_ratio)
 
-    if match_score < 80:
+    if match_score < 70:
         print(f"\n🔍 Input: {text}")
         print(f"🔹 Cleaned: {cleaned}")
         print("❌ Company not found in dataset.")

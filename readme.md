@@ -29,7 +29,7 @@ FAKE_JOB_DETECTION_PROJECT/
 │   └── vectorizer.pkl              # Pickled TF‑IDF vectorizer
 ├── main.py                         # Entry‑point script (train + predict loop)
 ├── requirements.txt                # Python dependencies
-└── LICENSE                         # Project license (MI T)
+└── LICENSE                         # Project license (MIT)
 ```
 
 ---

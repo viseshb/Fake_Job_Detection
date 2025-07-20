@@ -12,7 +12,7 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
 # === Paths ===
-DATA_PATH = 'C:/Users/vises/OneDrive/Desktop/Masters_TAMUSA/Sem2/Artificial Intelligence/Fake_Job_Detection_Project/aiproject/Fake Postings.csv'
+DATA_PATH = 'C:/Users/vises/OneDrive/Desktop/Masters_TAMUSA/Sem2/Artificial Intelligence/Fake_Job_Detection_Project/dataset/Fake Postings.csv'
 MODEL_DIR = 'model'
 os.makedirs(MODEL_DIR, exist_ok=True)
 

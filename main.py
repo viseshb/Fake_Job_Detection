@@ -32,7 +32,7 @@ def load_dataset():
 
 def train_model(df):
     df['label'] = df['fraudulent']
-    df = df[['company_profile_clean', 'label']].drop_duplicates()
+    df = df[['company_profile_clean', 'label']]
 
     print("✅ Final class distribution:\n", df['label'].value_counts())
 

@@ -1,146 +1,164 @@
-# Fake Job Detection 🚫💼
 
-A lightweight, fully‑offline tool for spotting potentially fraudulent job postings by analyzing the **company profile** text. It combines classic NLP techniques (TF‑IDF) with supervised machine‑learning (Logistic Regression & Random Forest) and an interactive fuzzy‑matching layer so you can iteratively grow and refine the dataset.
+# Fake Job Detection 🚫💼
+
+A lightweight, fully‑offline tool for spotting potentially fraudulent job postings by analyzing the **company profile** text. It combines classic NLP techniques (TF‑IDF) with supervised machine learning (Logistic Regression & Random Forest) and an interactive fuzzy‑matching layer so you can iteratively grow and refine the dataset.
 
 ---
 
-## ✨ Key Features
+## ✨ Key Features
 
 | Feature                    | Description                                                                                       |
 | -------------------------- | ------------------------------------------------------------------------------------------------- |
-| **End‑to‑end pipeline**    | Cleans data → vectorizes text → trains models → makes predictions with probabilities              |
-| **Bidirectional learning** | During prediction you can *add new company profiles* on‑the‑fly, immediately retraining the model |
-| **Two classifiers**        | Logistic Regression (balanced) & Random Forest (100 trees) saved as pickles for instant reuse     |
-| **Fuzzy lookup**           | Uses `fuzzywuzzy` to show the closest match in the dataset and a confidence score                 |
-| **No cloud needed**        | Runs 100 % locally; ideal for demos or coursework where internet may be restricted                |
+| **End‑to‑end pipeline**    | Cleans data → vectorizes text → trains models → makes predictions with probabilities              |
+| **Bidirectional learning** | During prediction you can *add new company names* on‑the‑fly, immediately retraining the model    |
+| **Two classifiers**        | Logistic Regression (balanced) & Random Forest (100 trees) saved as pickles for instant reuse     |
+| **Fuzzy company matching** | Uses `fuzzywuzzy` to show the closest known company and a confidence score                        |
+| **No cloud needed**        | Runs 100% locally; ideal for demos or coursework where internet may be restricted                 |
+| **Supports short names**   | Now accepts 1-word inputs like "Google" or "Grok" with smart matching and prediction               |
 
 ---
 
-## 🗂 Project Structure
+## 🗂 Project Structure
 
 ```text
 FAKE_JOB_DETECTION_PROJECT/
 ├── dataset/
-│   └── Fake Postings.csv           # Kaggle dataset (raw source)
-├── model/                          # Auto‑generated after the first run
-│   ├── known_companies.pkl         # Set of cleaned company profiles
-│   ├── logistic_model.pkl          # Pickled Logistic Regression model
-│   ├── random_forest_model.pkl     # Pickled Random Forest model
-│   └── vectorizer.pkl              # Pickled TF‑IDF vectorizer
-├── main.py                         # Entry‑point script (train + predict loop)
+│   └── Fake Postings.csv           # Main dataset (augmented with user entries)
+├── model/
+│   ├── known_companies.pkl         # Set of cleaned company profiles
+│   ├── logistic_model.pkl          # Pickled Logistic Regression model
+│   ├── random_forest_model.pkl     # Pickled Random Forest model
+│   └── vectorizer.pkl              # Pickled TF‑IDF vectorizer
+├── main.py                         # Entry point script (training + CLI)
 ├── requirements.txt                # Python dependencies
-└── LICENSE                         # Project license (MIT)
+└── LICENSE                         # MIT License
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start
 
-1. **Clone & enter the repo**
+1. **Clone the repo**
    ```bash
-   git clone https://github.com/<YOUR_USERNAME>/Fake_Job_Detection_Project.git
+   git clone https://github.com/<your-username>/Fake_Job_Detection_Project.git
    cd Fake_Job_Detection_Project
    ```
-2. **Create a virtual environment (optional but recommended)**
+
+2. **(Optional) Create a virtual environment**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
+
 3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
-4. **Run the app**
+
+4. **Run the tool**
    ```bash
    python main.py
    ```
-   *First launch trains the models and writes them to **`model/`**. Subsequent runs load the pickles instantly.*
 
 ---
 
-## 🖥️ Using the CLI
+## 🖥️ Using the CLI
 
-| Step                     | What happens                                                                                                                                      |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Start‑up**             | Dataset is cleaned (`regex` + lowercase). If no pickles are found, models are trained from scratch                                                |
-| **Optional data entry**  | You can add new company profiles *before* predictions begin; each addition triggers instant retraining                                            |
-| **Prediction loop**      | Paste any company‑profile text → the tool prints: cleaned text, closest dataset match, fuzzy score, dataset label, model prediction & probability |
-| **Interactive learning** | Unknown companies can be labelled on the spot (fraudulent / real) and appended to the CSV, then the model is retrained                            |
+| Step                     | Action                                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| **Start‑up**             | Loads and cleans data. If no model exists, it trains from scratch.                                               |
+| **Data Augmentation**    | Optionally add new company profiles (fraudulent/real) before predictions start. Retraining is automatic.         |
+| **Prediction loop**      | Enter company names (e.g., "Google"). Tool will match against known profiles and predict fraud probability.       |
+| **On‑the‑fly learning**  | If a company is missing, you can label it manually and it gets added and retrained instantly.                    |
 
-### Example Session
+### 🔍 Example
 
 ```text
-🔄 Loading and preparing dataset…
-✅ Loaded existing model.
-
-Would you like to add any new company profiles? (yes/no): no
-
 🧠 Enter company profiles to detect fraud (blank to exit):
->> Leading FinTech firm providing zero‑fee credit cards worldwide
-🔹 Closest Match: innovative fintech startup disrupting global payments
-🔹 Match Score: 86 % → ⚠️ Acceptable match – use with caution
-🔹 Dataset Label: Real
-🔹 Model Prediction: Fraudulent
-🔹 Fraud Probability: 0.78
---------------------------------------------------
+>> Google
+🔹 Closest Match: google
+🔹 Match Score: 100% → ✅ Highly confident match
+🔹 Dataset Label: Real
+🔹 Model Prediction: Real
+🔹 Fraud Probability: 0.330
 ```
 
 ---
 
-## 🔧 Configuration & Customization
+## 🔧 Configuration & Customization
 
-| Variable       | Where             | Purpose                                                              |
-| -------------- | ----------------- | -------------------------------------------------------------------- |
-| `DATA_PATH`    | `main.py`         | Absolute path to `Fake Postings.csv`. Adjust if you move the dataset |
-| `max_features` | TF‑IDF vectorizer | Increase for richer vocabulary (may slow training)                   |
-| `n_estimators` | Random Forest     | Tune tree count for accuracy vs. speed                               |
+| Variable       | Location           | Purpose                                                                 |
+| -------------- | ------------------ | ----------------------------------------------------------------------- |
+| `DATA_PATH`    | `main.py`          | Path to the dataset CSV file                                            |
+| `max_features` | TF-IDF Vectorizer  | Adjust vocabulary richness                                              |
+| `n_estimators` | Random Forest      | Number of decision trees                                                |
 
-Feel free to fork the repo and experiment with alternative models (e.g. SVM, XGBoost) or more sophisticated text cleaning (stemming, stop‑word removal).
+You can customize further with advanced models like `SVM`, `XGBoost`, or plug in `transformers`.
 
 ---
 
-## 📊 Model Details
+## 📊 Model Performance
 
-- **Pre‑processing**: Non‑word characters removed, lower‑cased, extra spaces trimmed.
-- **Vectorization**: TF‑IDF with a maximum of 3 000 features.
-- **Class imbalance**: `class_weight='balanced'` for Logistic Regression; balanced subsampling is built‑in for Random Forest.
-- **Evaluation**: 80 / 20 stratified split (unless a class has fewer than two samples, in which case the model trains on the full dataset).
+- **Pre-processing**: Lowercasing + removing special characters
+- **Vectorization**: TF-IDF (`max_features=3000`)
+- **Class imbalance**: Automatically balanced using `class_weight='balanced'`
+- **Training**: 80/20 stratified split unless a class has too few samples
 
-Sample metrics printed after training:
+Typical training output:
 
 ```
-=== Random Forest ===
-precision    recall    f1‑score    support
-0     0.97     0.99       0.98       6668
-1     0.81     0.45       0.58        378
-accuracy                0.97       7046
+=== Logistic Regression ===
+Accuracy: 99.5%
+Confusion Matrix:
+[[2002   19]
+ [   0 2000]]
 ```
 
 ---
 
-## 🤝 Contributing
+## 📄 License
 
-Pull requests are welcome! If you spot a bug or have an idea for improvement:
-
-1. Open an issue describing the change.
-2. Create a feature branch (`git checkout -b feature/my‑feature`).
-3. Commit your changes with clear messages.
-4. Push and open a PR.
-
-Please run linting/tests before submitting (coming soon).
+This project is licensed under the **MIT License**.
 
 ---
 
-## 📄 License
+## 🙏 Acknowledgements
 
-This project is released under the **MIT License** – see the `LICENSE` file for details.
+- Dataset from the Kaggle community: *Fake Job Postings*
+- Tools: `scikit-learn`, `pandas`, `numpy`, `fuzzywuzzy`
+
+> *Built to help job seekers detect fraud with intelligence and simplicity.*
 
 ---
+## 📉 Sample Output: Your Confusion Matrices
+```
+=== Logistic Regression ===
+              precision    recall  f1-score   support
 
-## 🙏 Acknowledgements
+           0       1.00      0.99      1.00      2021
+           1       0.99      1.00      1.00      2000
 
-- Original *Fake Job Postings* dataset – © Kaggle community contributors.
-- `scikit‑learn`, `pandas`, `numpy`, and `fuzzywuzzy` – the open‑source workhorses powering this project.
+    accuracy                           1.00      4021
+   macro avg       1.00      1.00      1.00      4021
+weighted avg       1.00      1.00      1.00      4021
 
-> *Built with ❤ to help job‑seekers stay safe.*
+Confusion Matrix:
+ [[2002   19]
+ [   0 2000]]
+Accuracy: 0.9952748072618751
 
+=== Random Forest ===
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      1.00      2021
+           1       0.99      1.00      1.00      2000
+
+    accuracy                           1.00      4021
+   macro avg       1.00      1.00      1.00      4021
+weighted avg       1.00      1.00      1.00      4021
+
+Confusion Matrix:
+ [[2002   19]
+ [   0 2000]]
+Accuracy: 0.9952748072618751
+```

@@ -71,7 +71,7 @@ def train_model(df):
         disp_lr = ConfusionMatrixDisplay(confusion_matrix=cm_lr, display_labels=['Real', 'Fake'])
         disp_lr.plot(cmap=plt.cm.Blues, values_format='d')
         plt.title("Logistic Regression - Confusion Matrix")
-        plt.savefig("confusion_matrix_lr.png")
+        plt.savefig("images/confusion_matrix_lr.png")
         plt.close()
 
         # === Random Forest ===
@@ -88,7 +88,7 @@ def train_model(df):
         disp_rf = ConfusionMatrixDisplay(confusion_matrix=cm_rf, display_labels=['Real', 'Fake'])
         disp_rf.plot(cmap=plt.cm.Blues, values_format='d')
         plt.title("Random Forest - Confusion Matrix")
-        plt.savefig("confusion_matrix_rf.png")
+        plt.savefig("images/confusion_matrix_rf.png")
         plt.close()
     pickle.dump(lr, open(f"{MODEL_DIR}/logistic_model.pkl", "wb"))
     pickle.dump(rf, open(f"{MODEL_DIR}/random_forest_model.pkl", "wb"))

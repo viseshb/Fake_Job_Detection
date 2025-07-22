@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 import re
@@ -7,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report,ConfusionMatrixDisplay, confusion_matrix, accuracy_score
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
@@ -44,13 +45,11 @@ def train_model(df):
     if len(value_counts) < 2 or value_counts.min() < 2:
         print("⚠️ Not enough samples in each class. Training on entire data without test split.")
 
-        # Logistic Regression
         lr = LogisticRegression(max_iter=1000, class_weight='balanced')
         lr.fit(X, y)
         print("\n=== Logistic Regression ===")
         print("Trained on full data (no test split).")
 
-        # Random Forest
         rf = RandomForestClassifier(n_estimators=100, random_state=42)
         rf.fit(X, y)
         print("\n=== Random Forest ===")
@@ -58,24 +57,39 @@ def train_model(df):
     else:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
-        # Logistic Regression
+        # === Logistic Regression ===
         lr = LogisticRegression(max_iter=1000, class_weight='balanced')
         lr.fit(X_train, y_train)
         y_pred_lr = lr.predict(X_test)
         print("\n=== Logistic Regression ===")
         print(classification_report(y_test, y_pred_lr, zero_division=0))
-        print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_lr))
+        cm_lr = confusion_matrix(y_test, y_pred_lr)
+        print("Confusion Matrix:\n", cm_lr)
         print("Accuracy:", accuracy_score(y_test, y_pred_lr))
 
-        # Random Forest
+        # Save confusion matrix image for Logistic Regression
+        disp_lr = ConfusionMatrixDisplay(confusion_matrix=cm_lr, display_labels=['Real', 'Fake'])
+        disp_lr.plot(cmap=plt.cm.Blues, values_format='d')
+        plt.title("Logistic Regression - Confusion Matrix")
+        plt.savefig("confusion_matrix_lr.png")
+        plt.close()
+
+        # === Random Forest ===
         rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
         rf.fit(X_train, y_train)
         y_pred_rf = rf.predict(X_test)
         print("\n=== Random Forest ===")
         print(classification_report(y_test, y_pred_rf, zero_division=0))
-        print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_rf))
+        cm_rf = confusion_matrix(y_test, y_pred_rf)
+        print("Confusion Matrix:\n", cm_rf)
         print("Accuracy:", accuracy_score(y_test, y_pred_rf))
 
+        # Save confusion matrix image for Random Forest
+        disp_rf = ConfusionMatrixDisplay(confusion_matrix=cm_rf, display_labels=['Real', 'Fake'])
+        disp_rf.plot(cmap=plt.cm.Blues, values_format='d')
+        plt.title("Random Forest - Confusion Matrix")
+        plt.savefig("confusion_matrix_rf.png")
+        plt.close()
     pickle.dump(lr, open(f"{MODEL_DIR}/logistic_model.pkl", "wb"))
     pickle.dump(rf, open(f"{MODEL_DIR}/random_forest_model.pkl", "wb"))
     pickle.dump(vectorizer, open(f"{MODEL_DIR}/vectorizer.pkl", "wb"))

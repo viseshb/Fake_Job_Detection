@@ -138,14 +138,14 @@ This project is licensed under the **MIT License**.
            0       1.00      0.99      1.00      2021
            1       0.99      1.00      1.00      2000
 
-    accuracy                           1.00      4021
-   macro avg       1.00      1.00      1.00      4021
-weighted avg       1.00      1.00      1.00      4021
+    accuracy                           1.00      4022
+   macro avg       1.00      1.00      1.00      4022
+weighted avg       1.00      1.00      1.00      4022
 
 Confusion Matrix:
- [[2002   19]
- [   0 2000]]
-Accuracy: 0.9952748072618751
+ [[2004   17]
+ [   0 2001]]
+Accuracy: 0.995773247140726
 ```
 ![Logistic Regression Confusion Matrix](images/confusion_matrix_lr.png)
 ```
@@ -155,14 +155,14 @@ Accuracy: 0.9952748072618751
            0       1.00      0.99      1.00      2021
            1       0.99      1.00      1.00      2000
 
-    accuracy                           1.00      4021
-   macro avg       1.00      1.00      1.00      4021
-weighted avg       1.00      1.00      1.00      4021
+    accuracy                           1.00      4022
+   macro avg       1.00      1.00      1.00      4022
+weighted avg       1.00      1.00      1.00      4022
 
 Confusion Matrix:
- [[2002   19]
- [   0 2000]]
-Accuracy: 0.9952748072618751
+ [[2004   17]
+ [   0 2001]]
+Accuracy: 0.995773247140726
 ```
 ![Random Forest Confusion Matrix](images/confusion_matrix_rf.png)
 ```

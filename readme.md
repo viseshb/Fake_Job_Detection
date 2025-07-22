@@ -146,7 +146,7 @@ Confusion Matrix:
  [[2002   19]
  [   0 2000]]
 Accuracy: 0.9952748072618751
-
+![Confusion Matrix](images/confusion_lr.png)
 === Random Forest ===
               precision    recall  f1-score   support
 
@@ -161,4 +161,5 @@ Confusion Matrix:
  [[2002   19]
  [   0 2000]]
 Accuracy: 0.9952748072618751
+![Confusion Matrix](images/confusion_rf.png)
 ```

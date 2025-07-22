@@ -34,7 +34,7 @@ def load_dataset():
 def train_model(df):
     df['label'] = df['fraudulent']
     df = df[['company_profile_clean', 'label']]
-
+    print("✅ Dataset loaded with", len(df), "entries.")
     print("✅ Final class distribution:\n", df['label'].value_counts())
 
     value_counts = df['label'].value_counts()
@@ -45,20 +45,20 @@ def train_model(df):
     if len(value_counts) < 2 or value_counts.min() < 2:
         print("⚠️ Not enough samples in each class. Training on entire data without test split.")
 
-        lr = LogisticRegression(max_iter=1000, class_weight='balanced')
+        lr = LogisticRegression(max_iter=1000)
         lr.fit(X, y)
         print("\n=== Logistic Regression ===")
         print("Trained on full data (no test split).")
 
-        rf = RandomForestClassifier(n_estimators=100, random_state=42)
+        rf = RandomForestClassifier(n_estimators=100)
         rf.fit(X, y)
         print("\n=== Random Forest ===")
         print("Trained on full data (no test split).")
     else:
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
 
         # === Logistic Regression ===
-        lr = LogisticRegression(max_iter=1000, class_weight='balanced')
+        lr = LogisticRegression(max_iter=1000)
         lr.fit(X_train, y_train)
         y_pred_lr = lr.predict(X_test)
         print("\n=== Logistic Regression ===")
@@ -75,7 +75,7 @@ def train_model(df):
         plt.close()
 
         # === Random Forest ===
-        rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
+        rf = RandomForestClassifier(n_estimators=100)
         rf.fit(X_train, y_train)
         y_pred_rf = rf.predict(X_test)
         print("\n=== Random Forest ===")
